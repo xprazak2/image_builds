@@ -1,0 +1,39 @@
+---
+- include_vars: known-images.yaml
+
+- fail:
+    msg: "Unknown image to build: {{ image }}. Known images are: {{ known_images | join(', ') }}"
+  when: image not in known_images
+
+- set_fact:
+    build_dir: "{{ playbook_dir }}/../tmp"
+
+- name: 'Create build dir for {{ image }}'
+  file:
+    path: "{{ build_dir }}/{{ image }}"
+    state: directory
+
+- name: "Create Dockerfile for {{ image }}"
+  template:
+    src: "{{ image }}/Dockerfile.j2"
+    dest: "{{ build_dir }}/{{ image }}/Dockerfile"
+    mode: 0600
+
+- name: "Copy container assets for {{ image }} to build dir"
+  copy:
+    src: "{{ role_path }}/files/{{ image }}/container-assets"
+    dest: "{{ build_dir }}/{{ image }}"
+    mode: preserve
+  # todo when container-assets exist
+
+- name: "Build image for {{ image }}"
+  command: "podman build --tag {{ image_name }}:{{ tag }} {{ build_dir }}/{{ image }}"
+
+- name: Push {{ image }} image into registry {{ registry }}
+  command: "podman push {{ image_name }}:{{ tag }} {{ push_flags }}"
+
+- name: "Clean up build dir"
+  file:
+    path: "{{ build_dir }}/{{ image }}"
+    state: absent
+  when: cleanup
