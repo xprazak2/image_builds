@@ -1,0 +1,14 @@
+---
+version: nightly
+image: ''
+image_name: "{{ (registry == '') | ternary(image, [registry, image] | join('/')) }}"
+cleanup: true
+version_build: "{{ (version == 'latest') | ternary('', '1') }}"
+tag: "{{ (version == 'latest') | ternary(version, [version, version_build] | join('-')) }}"
+rpms_to_install: []
+registry: ''
+registry_user: ''
+registry_token: ''
+credentials: "{{ [registry_user, registry_token] | join(':')}}"
+creds_flag: "{{ (registry_token != '' and registry_user != '') | ternary(['--creds', credentials] | join(' '), '') }}"
+push_flags: "{{ creds_flag }}"

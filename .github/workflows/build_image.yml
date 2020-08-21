@@ -1,0 +1,34 @@
+---
+name: Build Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_name:
+        description: Name of the project to build image for
+        required: true
+      version:
+        description: Foreman version
+        required: false
+      version_build:
+        description: Build version
+        required: false
+      plugin_rpms:
+        description: Plugin rpms to install
+        required: false
+      registry:
+        description: Registry to push into
+        required: false
+
+jobs:
+  build:
+    name: Build image for ${{ github.event.inputs.project_name }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run playbook
+        run: |
+          ansible-playbook ./playbooks/build-${{ github.event.inputs.project_name }}-image.yml -e registry_user=$registry_user -e registry_token=$registry_token -e '${{ toJson(github.event.inputs) }}'
+        env:
+          registry_user: ${{ secrets.REGISTRY_USER }}
+          registry_token: ${{ secrets.REGISTRY_TOKEN }}

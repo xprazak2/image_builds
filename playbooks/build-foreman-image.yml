@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars:
+    release_version: latest
+    build_version: 1
+    plugin_rpms: []
+    cleanup: false
+  roles:
+    - role: build-image
+      vars:
+        image: foreman
+        version: "{{ release_version }}"
+        version_build: "{{ build_version }}"
+        rpms_to_install: "{{ plugin_rpms }}"

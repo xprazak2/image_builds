@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars:
+    version: latest
+    version_build: 1
+    plugin_rpms: []
+    plugin_configs: []
+    cleanup: false
+  roles:
+    - role: build-image
+      vars:
+        image: foreman-proxy
+        rpms_to_install: "{{ plugin_rpms }}"
+        configs_to_copy: "{{ plugin_configs }}"
