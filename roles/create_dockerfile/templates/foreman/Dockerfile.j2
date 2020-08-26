@@ -1,0 +1,32 @@
+FROM centos:7
+
+RUN echo "tsflags=nodocs" >> /etc/yum.conf && \
+    yum -y install http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
+                   http://yum.theforeman.org/releases/{{ version }}/el7/x86_64/foreman-release.rpm && \
+    yum -y install foreman-release-scl && \
+    yum -y install foreman foreman-postgresql tfm-rubygem-puma tfm-rubygem-redis && yum clean all
+
+COPY container-assets/settings.yaml /etc/foreman/settings.yaml
+
+# Generate apipie:cache:index
+RUN yum -y install foreman-sqlite && \
+    yum clean all
+
+RUN DATABASE_URL=sqlite3::memory: foreman-rake db:create db:migrate apipie:cache:index
+
+RUN yum -y remove foreman-sqlite tfm-ror51-rubygem-sqlite3 && \
+    yum clean all
+# end generate apipie:cache:index
+
+{% if rpms_to_install | length > 0 %}
+RUN yum -y install {{ rpms_to_install | join(' ') }} && \
+    yum clean all
+{% endif %}
+
+COPY container-assets/database.yml /etc/foreman/database.yml
+COPY container-assets/entrypoint.sh /usr/bin/entrypoint.sh
+COPY container-assets/start_foreman.sh /usr/bin/start_foreman.sh
+COPY container-assets/wait_on_postgres.py /usr/bin/wait_on_postgres.py
+
+ENTRYPOINT ["/usr/bin/entrypoint.sh"]
+CMD ["/usr/bin/start_foreman.sh"]

@@ -1,0 +1,8 @@
+---
+version: nightly
+image: ''
+image_name: "{{ image }}"
+cleanup: true
+version_build: "{{ (version == 'latest') | ternary('', '1') }}"
+tag: "{{ (version == 'latest') | ternary(version, [version, version_build] | join('-')) }}"
+rpms_to_install: []

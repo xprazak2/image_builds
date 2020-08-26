@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars:
+    version: 2.0
+    version_build: 1
+    cleanup: false
+    rpms_to_install: []
+    configs_to_copy: []
+  roles:
+    - role: create_dockerfile
+      vars:
+        image: foreman-proxy

@@ -1,0 +1,28 @@
+---
+- include_vars: known-images.yaml
+
+- fail:
+    msg: "Unknown image to build: {{ image }}. Known images are: {{ known_images | join(', ') }}"
+  when: image not in known_images
+
+- set_fact:
+    build_dir: "{{ playbook_dir }}/../dockerfiles"
+
+- name: 'Create dockerfiles dir for {{ image }}'
+  file:
+    path: "{{ build_dir }}/{{ image }}"
+    state: directory
+
+- name: "Create Dockerfile for {{ image }}"
+  template:
+    src: "{{ image }}/Dockerfile.j2"
+    dest: "{{ build_dir }}/{{ image }}/Dockerfile"
+
+- name: "Copy container assets for {{ image }} to build dir"
+  copy:
+    src: "{{ role_path }}/files/{{ image }}/container-assets"
+    dest: "{{ build_dir }}/{{ image }}"
+    mode: preserve
+  # todo when container-assets exist
+
+# git add, commit and push

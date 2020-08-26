@@ -1,0 +1,5 @@
+---
+:enabled: https
+:database:
+:core_url: "{{ foreman_url }}"
+:external_core: true
