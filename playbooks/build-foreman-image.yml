@@ -10,4 +10,3 @@
     - role: create_dockerfile
       vars:
         image: foreman
-        version_build: "{{ foreman_version_build }}"

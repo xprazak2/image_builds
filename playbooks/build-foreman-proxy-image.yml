@@ -11,3 +11,8 @@
     - role: create_dockerfile
       vars:
         image: foreman-proxy
+    - role: commit_changes
+      vars:
+        image: foreman-proxy
+        remote: origin
+        branch: quay-builder
