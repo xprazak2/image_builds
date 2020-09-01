@@ -1,0 +1,9 @@
+---
+- name: Add changes
+  shell: "git add {{ playbook_dir }}/.."
+
+- name: 'Commit'
+  shell: "git commit -m 'Automated Dockerfile commit for {{ image }}:{{ version }}-{{ version_build }}'"
+
+- name: Push
+  shell: "git push {{ remote }} {{ branch }}"

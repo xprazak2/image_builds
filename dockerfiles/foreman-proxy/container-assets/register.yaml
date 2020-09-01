@@ -1,0 +1,27 @@
+---
+- hosts: localhost
+  vars:
+    username: admin
+    password: changeme
+    url: "http://{{ lookup('env', 'FOREMAN_SERVICE_HOST') }}:8080/api/v2/smart_proxies"
+    data:
+      name: "{{ lookup('env', 'FOREMAN_PROXY_SERVICE_HOST') }}"
+      url: "http://{{ lookup('env', 'FOREMAN_PROXY_SERVICE_HOST') }}:8080"
+  tasks:
+    - name: "register smart proxy"
+      uri:
+        force_basic_auth: yes
+        headers:
+          Content-Type: "application/json"
+        method: POST
+        return_content: yes
+        timeout: 3
+        user: "{{ username }}"
+        password: "{{ password }}"
+        url: "{{ url }}"
+        body: "{{ data | to_json }}"
+        status_code: [201]
+      register: registration_result
+      until: (registration_result.json is defined) and (registration_result.status == 422 or registration_result.status == 201)
+      retries: 300
+      delay: 4

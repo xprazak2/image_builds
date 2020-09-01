@@ -1,0 +1,33 @@
+---
+:enabled: true
+
+# Log file for the forwarding script.
+#:openscap_send_log_file: /var/log/foreman-proxy/openscap-send.log
+
+# Directory where OpenSCAP audits are stored
+# before they are forwarded to Foreman
+#:spooldir: /var/spool/foreman-proxy/openscap
+
+# Directory where OpenSCAP content XML are stored
+# So we will not request the XML from Foreman each time
+#:contentdir: /var/lib/openscap/content
+
+# Directory where OpenSCAP tailoring XML files are stored
+#:tailoring_dir: /var/lib/openscap/tailoring
+
+# Directory where OpenSCAP report XML are stored
+# So Foreman can request arf xml reports
+#:reportsdir: /usr/share/foreman-proxy/openscap/reports
+
+# Directory where OpenSCAP report XML are stored
+# In case sending to Foreman succeeded, yet failed to save to reportsdir
+#:failed_dir: /usr/share/foreman-proxy/openscap/failed
+
+# Directory where corrupted OpenSCAP report XML are stored
+# When proxy cannot parse the report sent by client
+#:corrupted_dir: /var/lib/foreman-proxy/openscap/corrupted
+
+# The time we wait for response after the upload request connection was established, in seconds.
+# Affects sending reports to Foreman (directly and from spool) and fetching scap content or tailoring file
+# for distribution to clients
+#:timeout: 60
