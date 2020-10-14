@@ -1,0 +1,4 @@
+---
+- name: Push {{ image }} image into {{ registry }}
+  command: "podman push {{ image_name }}:{{ tag }} {{ push_flags }}"
+  when: push

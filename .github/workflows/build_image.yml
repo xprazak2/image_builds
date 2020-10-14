@@ -13,11 +13,17 @@ on:
       version_build:
         description: Build version
         required: false
-      plugin_rpms:
+      rpms_to_install:
         description: Plugin rpms to install
+        required: false
+      configs_to_copy:
+        description: Plugin configs to copy
         required: false
       registry:
         description: Registry to push into
+        required: false
+      push:
+        description: Should we push into registry?
         required: false
 
 jobs:
