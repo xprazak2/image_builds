@@ -1,0 +1,10 @@
+---
+registry: ''
+image_name: "{{ (registry == '') | ternary(image, [registry, image] | join('/')) }}"
+tag: "{{ (version == 'latest') | ternary(version, [version, version_build] | join('-')) }}"
+build_dir: "{{ playbook_dir }}/../tmp"
+version: latest
+version_build: "{{ (version == 'latest') | ternary('', '1') }}"
+snippets: []
+rpms_to_install: []
+

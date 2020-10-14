@@ -1,0 +1,5 @@
+---
+- name: 'Create build dir for {{ image }}'
+  file:
+    path: "{{ build_dir }}/{{ image }}"
+    state: "{{ build_dir_state }}"

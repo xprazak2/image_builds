@@ -1,0 +1,38 @@
+FROM centos:7
+
+RUN echo "tsflags=nodocs" >> /etc/yum.conf && \
+    yum -y install http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
+                   http://yum.theforeman.org/releases/{{ version }}/el7/x86_64/foreman-release.rpm && \
+    yum -y install foreman-release-scl && \
+    yum -y install foreman foreman-postgresql tfm-rubygem-puma tfm-rubygem-redis && yum clean all
+
+# Generate apipie:cache:index
+RUN yum -y install tfm-rubygem-activerecord-nulldb-adapter && yum clean all
+
+COPY container-assets/schema.rb.nulldb /usr/share/foreman/db/schema.rb
+COPY container-assets/nulldb.rb /usr/share/foreman/bundler.d/nulldb.rb
+RUN foreman-rake apipie:cache:index RAILS_ENV=production DATABASE_URL=nulldb://nohost
+
+RUN mv /usr/share/foreman/db/schema.rb /usr/share/foreman/db/schema.rb.nulldb
+RUN rm -f /usr/share/foreman/bundler.d/nulldb.rb
+RUN yum -y remove tfm-rubygem-activerecord-nulldb-adapter && yum clean all
+# end generate apipie:cache:index
+
+{% if rpms_to_install | length > 0 %}
+RUN yum -y install {{ rpms_to_install | join(' ') }} && \
+    yum clean all
+{% endif %}
+
+{% for snippet in snippets %}
+{% include snippet %}
+
+{% endfor %}
+
+COPY container-assets/database.yml /etc/foreman/database.yml
+COPY container-assets/settings.yaml /etc/foreman/settings.yaml
+COPY container-assets/entrypoint.sh /usr/bin/entrypoint.sh
+COPY container-assets/start_foreman.sh /usr/bin/start_foreman.sh
+COPY container-assets/wait_on_postgres.py /usr/bin/wait_on_postgres.py
+
+ENTRYPOINT ["/usr/bin/entrypoint.sh"]
+CMD ["/usr/bin/start_foreman.sh"]

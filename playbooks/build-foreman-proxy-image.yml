@@ -2,14 +2,12 @@
 - hosts: localhost
   gather_facts: no
   vars:
-    version: latest
-    version_build: 1
-    plugin_rpms: []
-    plugin_configs: []
-    cleanup: false
+    image: foreman-proxy
+    configs_to_copy: []
+  vars_files:
+    - vars/build-image-vars.yml
   roles:
+    - role: create-workspace
+    - role: foreman-proxy-dockerfile
     - role: build-image
-      vars:
-        image: foreman-proxy
-        rpms_to_install: "{{ plugin_rpms }}"
-        configs_to_copy: "{{ plugin_configs }}"
+    - role: push-image

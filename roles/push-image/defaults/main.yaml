@@ -1,0 +1,6 @@
+registry_user: ''
+registry_token: ''
+push: false
+credentials: "{{ [registry_user, registry_token] | join(':')}}"
+creds_flag: "{{ (registry_token != '' and registry_user != '') | ternary(['--creds', credentials] | join(' '), '') }}"
+push_flags: "{{ creds_flag }}"
